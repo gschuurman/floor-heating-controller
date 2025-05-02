@@ -46,10 +46,6 @@ esp32:
 
 preferences:
   flash_write_interval: 60min
-  
-
-ota:
-  - platform: esphome
 
 safe_mode:
 
@@ -61,6 +57,6 @@ light:
     restore_mode: ALWAYS_OFF
     pin: GPIO02
 
-psram:
-  mode: octal
-  speed: 80MHz
+# psram:
+#   mode: octal
+#   speed: 80MHz
