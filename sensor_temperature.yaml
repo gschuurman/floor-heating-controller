@@ -12,34 +12,15 @@
 
 sensor:
   - platform: homeassistant
-    name: "Office temperature sensor from hassio"
-    entity_id: sensor.ble_xiaomi_bureau_temperature
-    id: office_temperature_sensor
+    name: "Livingroom temprature sensor from homeassistant"
+    entity_id: climate.woonkamer_2
+    attribute: current_temperature
+    id: livingroom_temprature_sensor
 
   - platform: homeassistant
-    name: "Living room temperature sensor from hassio"
-    entity_id: sensor.ble_xiaomi_salon_temperature
-    id: living_room_temperature_sensor
-
-  - platform: homeassistant
-    name: "Bedroom temperature sensor from hassio"
-    entity_id: sensor.ble_xiaomi_chambre_temperature
-    id: bedroom_temperature_sensor
-
-  - platform: homeassistant
-    name: "Bathroom temperature sensor from hassio"
-    entity_id: sensor.ble_xiaomi_bain_temperature
-    id: bathroom_temperature_sensor
-    
-  - platform: homeassistant
-    name: "Corridor temperature sensor from hassio"
-    entity_id: sensor.ble_xiaomi_corridor_temperature
-    id: corridor_temperature_sensor
-
-  - platform: homeassistant
-    name: "Storage temperature sensor from hassio"
-    entity_id: sensor.ble_xiaomi_reduit_temperature
-    id: reduit_temperature_sensor
+    name: "Hallway temprature sensor from homeassistant"
+    entity_id: sensor.temperature_entrance_hallway_temperature
+    id: hallway_temprature_sensor
     
   # - platform: homeassistant
     # name: "Indoor temperature sensor from hassio"
