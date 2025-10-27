@@ -27,12 +27,15 @@ climate:
     min_heating_off_time: 300s
     min_heating_run_time: 300s
     min_idle_time: 30s
+    on_control:
+      then:
+        - script.execute: TH${channel_number}_check      
     heat_action: 
-         - lambda: 'return;' # do nothing cause action is triggered by time interval
+        - lambda: 'return;' # do nothing cause action is triggered by time interval
     # cool_action:
-         # - lambda: 'return;' 
+        # - lambda: 'return;' 
     idle_action:
-         - lambda: 'return;' 
+        - lambda: 'return;' 
     visual:
       min_temperature: ${visual_min_temperature} 
       max_temperature: ${visual_max_temperature} 

@@ -79,19 +79,19 @@ esphome:
       - script.execute: pump_watchdog_script
 
 
-# button:
-#   - platform: template
-#     name: "TEST PUMP ON"
-#     on_press:
-#       - logger.log: "Manual Test: Sending PUMP_ON"
-#       - espnow.send:
-#           address: "${pump_mac_address}" # This uses the var you already have
-#           data: "PUMP_ON"
+button:
+  - platform: template
+    name: "TEST PUMP ON"
+    on_press:
+      - logger.log: "Manual Test: Sending PUMP_ON"
+      - espnow.send:
+          address: "${pump_mac_address}" # This uses the var you already have
+          data: "PUMP_ON"
 
-#   - platform: template
-#     name: "TEST PUMP OFF"
-#     on_press:
-#       - logger.log: "Manual Test: Sending PUMP_OFF"
-#       - espnow.send:
-#           address: "${pump_mac_address}"
-#           data: "PUMP_OFF"
+  - platform: template
+    name: "TEST PUMP OFF"
+    on_press:
+      - logger.log: "Manual Test: Sending PUMP_OFF"
+      - espnow.send:
+          address: "${pump_mac_address}"
+          data: "PUMP_OFF"
