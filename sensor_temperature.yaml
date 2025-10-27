@@ -2,7 +2,7 @@ sensor:
   - platform: homeassistant
     name: "Living room temperature sensor from hassio"
     entity_id: sensor.woonkamer_tempratuur
-    id: living_room_temperature_sensor
+    id: livingroom_temprature_sensor
 
   - platform: homeassistant
     name: "Hal temperature sensor from hassio"
