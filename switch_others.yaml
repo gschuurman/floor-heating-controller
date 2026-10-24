@@ -11,4 +11,17 @@ switch:
     name: "Valve maintenance"
     turn_on_action:
       - script.execute: valve_maintenance
-       
+
+button:
+  # bemf_trigger_*, min movement etc. are only written to flash every flash_write_interval (60 min).
+  # This button writes them immediately, e.g. before an OTA update or restart.
+  - platform: template
+    name: "Save config now"
+    id: ${id_prefix}save_config_now
+    icon: "mdi:content-save"
+    entity_category: config
+    on_press:
+      - lambda: |-
+          global_preferences->sync();
+          ESP_LOGI("heat_ctrl_main", "Saved all preferences to flash");
+          id(${id_prefix}main_logs).publish_state("Config saved to flash");
