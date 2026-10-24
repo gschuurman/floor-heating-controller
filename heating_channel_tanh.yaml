@@ -1,7 +1,7 @@
 ###### Info at https://github.com/nliaudat/floor-heating-controller/wiki/heating_channel_tanh
 
 substitutions:
-  overshoot: "0"
+  target_temp_overshoot: "0"
 ########### Climate thermostat
 climate:
   - platform: thermostat
