@@ -177,7 +177,10 @@ script:
           if (target_position <0) { target_position = 0;} 
 
           //call movement if target_position change consequently
-          if (abs(id(CH${channel_number}_cover).position - target_position) > id(${id_prefix}min_movement).state/100) {
+          float current_position = id(CH${channel_number}_cover).position;
+          // always finish at fully closed / fully open, even when the change is smaller than min_movement
+          bool to_end = (target_position <= 0.0f && current_position > 0.0f) || (target_position >= 1.0f && current_position < 1.0f);
+          if (to_end || abs(current_position - target_position) > id(${id_prefix}min_movement).state/100) {
               auto call = id(CH${channel_number}_cover).make_call();
               call.set_position(target_position);
               call.perform();
