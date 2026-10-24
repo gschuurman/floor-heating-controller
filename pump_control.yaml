@@ -11,6 +11,7 @@ substitutions:
   circulation_check_interval: "24h"
   circulation_run_duration: "5min"
   valve_open_wait_duration: 65s
+  pump_heartbeat_interval: 30s
 
 espnow:
   peers:
@@ -48,8 +49,8 @@ binary_sensor:
     name: "Global Heat Demand"
     id: global_heat_demand
     lambda: |-
-      for (auto *climate_entity : App.get_climates()) {
-        if (climate_entity->action == CLIMATE_ACTION_HEATING) {
+      for (auto *cover_entity : App.get_covers()) {
+        if (cover_entity->position > 0.0) {
           return true;
         }
       }
@@ -71,27 +72,59 @@ binary_sensor:
             data: "PUMP_OFF"
         - script.execute: pump_watchdog_script
 
+interval:
+  - interval: ${pump_heartbeat_interval}
+    then:
+      - if:
+          condition:
+            binary_sensor.is_on: global_heat_demand
+          then:
+            # State is ON: Send PUMP_ON
+            - logger.log: "Heartbeat: State is ON. Sending PUMP_ON."
+            - espnow.send:
+                address: "${pump_mac_address}"
+                data: "PUMP_ON"
+            # Also reset the anti-seize watchdog
+            - script.execute: pump_watchdog_script
+          else:
+            # State is OFF: Send PUMP_OFF
+            - logger.log: "Heartbeat: State is OFF. Sending PUMP_OFF."
+            - espnow.send:
+                address: "${pump_mac_address}"
+                data: "PUMP_OFF"
+
 esphome:
   on_boot:
     priority: 800
     then:
       - logger.log: "Starting 24h pump circulation watchdog."
       - script.execute: pump_watchdog_script
+      - logger.log: "Boot Check: turn on pump if the global_heat_demand is on"
+      - delay: 5s
+      - if:
+          condition:
+            binary_sensor.is_on: global_heat_demand
+          then:
+            - logger.log: "Boot Check: global_heat_demand is On. Force PUMP_ON."
+            - espnow.send:
+                address: "${pump_mac_address}"
+                data: "PUMP_ON"
+            # Reset ook de watchdog, want we zijn actief aan het verwarmen
+            - script.execute: pump_watchdog_script
 
+button:
+  - platform: template
+    name: "TEST PUMP ON"
+    on_press:
+      - logger.log: "Manual Test: Sending PUMP_ON"
+      - espnow.send:
+          address: "${pump_mac_address}" # This uses the var you already have
+          data: "PUMP_ON"
 
-# button:
-#   - platform: template
-#     name: "TEST PUMP ON"
-#     on_press:
-#       - logger.log: "Manual Test: Sending PUMP_ON"
-#       - espnow.send:
-#           address: "${pump_mac_address}" # This uses the var you already have
-#           data: "PUMP_ON"
-
-#   - platform: template
-#     name: "TEST PUMP OFF"
-#     on_press:
-#       - logger.log: "Manual Test: Sending PUMP_OFF"
-#       - espnow.send:
-#           address: "${pump_mac_address}"
-#           data: "PUMP_OFF"
+  - platform: template
+    name: "TEST PUMP OFF"
+    on_press:
+      - logger.log: "Manual Test: Sending PUMP_OFF"
+      - espnow.send:
+          address: "${pump_mac_address}"
+          data: "PUMP_OFF"
