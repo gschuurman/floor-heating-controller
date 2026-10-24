@@ -30,10 +30,24 @@ script:
     then:
       - script.execute: pump_watchdog_script
           
-      - logger.log: "Circulation: Opening all valves..."
+      # Channels 1+2, 3+4, ... share one BEMF sensor, so both channels of a pair must never
+      # run at the same time: open the odd channels first, then the even ones.
+      - logger.log: "Circulation: Opening odd channels..."
       - lambda: |-
           for (auto *cover_entity : App.get_covers()) {
-            cover_entity->make_call().set_command_open().perform();
+            std::string name(cover_entity->get_name().c_str());
+            if (name.rfind("CH", 0) == 0 && atoi(name.c_str() + 2) % 2 == 1) {
+              cover_entity->make_call().set_command_open().perform();
+            }
+          }
+      - delay: ${valve_open_wait_duration}
+      - logger.log: "Circulation: Opening even channels..."
+      - lambda: |-
+          for (auto *cover_entity : App.get_covers()) {
+            std::string name(cover_entity->get_name().c_str());
+            if (name.rfind("CH", 0) == 0 && atoi(name.c_str() + 2) % 2 == 0) {
+              cover_entity->make_call().set_command_open().perform();
+            }
           }
       - delay: ${valve_open_wait_duration}
       
